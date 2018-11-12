@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -14,7 +14,12 @@ public class HardwareBuggo {
     /* Public OpMode members. */
     public DcMotor spin = null;
 
-    public Servo sv1 = null;
+    public DcMotor fl   = null;
+    public DcMotor  fr  = null;
+    public DcMotor bl   = null;
+    public DcMotor  br  = null;
+
+    public CRServo sv1 = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -31,30 +36,61 @@ public class HardwareBuggo {
         hwMap = ahwMap;
         double sp = 0;
 
-        sv1 = hwMap.servo.get("servo1");
+        sv1 = (CRServo)hwMap.get("servo1");
 
         // Define and Initialize Motors
-        spin   = hwMap.dcMotor.get("spin");
+        spin = (DcMotor)hwMap.get("spin");
+
+        fl = (DcMotor)hwMap.get("fl");
+        bl = (DcMotor)hwMap.get("bl");
+        fr = (DcMotor)hwMap.get("fr");
+        br = (DcMotor)hwMap.get("br");
 
         spin.setPower(sp);
 
+        fl.setPower(sp);
+        fr.setPower(sp);
+        bl.setPower(sp);
+        br.setPower(sp);
+
+        sv1.setPower(sp);
+
         spin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         spin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        spin.setDirection(DcMotorSimple.Direction.REVERSE);
+        fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        fr.setDirection(DcMotorSimple.Direction.REVERSE);
+        br.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
-    public void turnServoContinuous(double speed){
-        sv1.setPosition(speed);
-    }
+    public void turnServoContinuous(double speed){ sv1.setPower(speed); }
     public void stopServoContinuous(){
-        sv1.setPosition(0);
+        sv1.setPower(0);
     }
 
     public void resetEncoders()
     {
         spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        br.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        br.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         spin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
@@ -105,13 +141,23 @@ public class HardwareBuggo {
 //    }
 
 
-    public void driveLimitless(double speed) {
+    public void driveLimitlessS(double speed) {
         spin.setPower(speed);
     }
+    public void drive(double speedL, double speedR) {
+        fl.setPower(speedL);
+        bl.setPower(speedL);
+        fr.setPower(speedR);
+        br.setPower(speedR);
+    }
+
 
     public void allStop()
     {
-        spin.setPower(0);
+        fl.setPower(0);
+        fr.setPower(0);
+        bl.setPower(0);
+        br.setPower(0);
     }
 
     /***

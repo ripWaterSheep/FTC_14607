@@ -45,15 +45,23 @@ public class BuggoTeleop extends OpMode{
 
         if(gamepad1.a){
             robot.turnServoContinuous(1);
-        }else if(gamepad1.y){
+        }else if(gamepad1.b){
             robot.turnServoContinuous(-1);
         }else{
             robot.stopServoContinuous();
         }
 
-        double power = gamepad1.left_stick_y;
-        if(Math.abs(power) < 0.05) power = 0;
-        robot.driveLimitless(power);
+        if(gamepad1.x) {
+            robot.driveLimitlessS(1);
+        } else if(gamepad1.y) {
+            robot.driveLimitlessS(-1);
+        }
+
+        double leftDrivePower = gamepad1.left_stick_y;
+        double rightDrivePower = gamepad1.right_stick_y;
+        if(Math.abs(leftDrivePower) < 0.05) leftDrivePower = 0;
+        if(Math.abs(rightDrivePower) < 0.05) rightDrivePower = 0;
+        robot.drive(leftDrivePower, rightDrivePower);
 
         //debug
 //        telemetry.addData("count ", close_count);
