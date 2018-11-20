@@ -55,7 +55,7 @@ public class HardwareBuggo {
 
         sv1.setPower(sp);
 
-        spin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        spin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -149,6 +149,14 @@ public class HardwareBuggo {
         bl.setPower(speedL);
         fr.setPower(speedR);
         br.setPower(speedR);
+    }
+
+    public void spinBrake() {
+        spin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public void spinFloat() {
+        spin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
 

@@ -4,9 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 //test
-@TeleOp(name="Teleop : Buggo", group="Buggo")
-public class BuggoTeleop extends OpMode{
+@TeleOp(name="Teleop : Swippo", group="Swippo")
+public class SwippoTeleop extends OpMode{
 
+    public static final String VUFORIA_KEY = "AY98fJD/////AAABmbqEQnRPkUDiuJvPxoEJVTxg7ZIIGZ/WhiglMsbq6v0777eQIRgD5PiaCJ9i5Uvo0RY7Q6WMrVJqs3e8AwMD4QzSyhyNyaGZfYqMdZZYQbzai8TGiWLzTsMLuLEMl6fDKK79m6+vV8rX0UPrPrX3EIXRW8sihCLSVvLjU5Y2xYglDIdSA2aiN4FB1YnDq/Aggc5VqKD56BydSDRpDEf88E/Q9X46u7VuLx+gm70ZnGHmRUQX70Ph7LkR3HM43Ar6bAEvkTTdJtWy1MwaSPCfFc31UX22kBxvHxs5xStEvNONSDcDknsnwzINNAXLyrM9C5jC3OJqJjfJKha4VaqFNuQPTDRzemEQ4j6FXTKRE7Ax";
 
     HardwareBuggo robot = new HardwareBuggo();
     boolean closed = false;
@@ -18,6 +19,7 @@ public class BuggoTeleop extends OpMode{
     @Override
     public void init() {
         robot.init(hardwareMap);
+        initVuforia();
         telemetry.addData("Say", "Hello Driver");
         updateTelemetry(telemetry);
     }
@@ -36,40 +38,9 @@ public class BuggoTeleop extends OpMode{
     public void loop() {
 
         double threshold = 0.1;
-
-        telemetry.addData("gamepad1 LX", gamepad1.left_stick_x);
-        telemetry.addData("gamepad1 LY", gamepad1.left_stick_y);
-        telemetry.addData("gamepad1 RX", gamepad1.right_stick_x);
-        telemetry.addData("gamepad1 RY", gamepad1.right_stick_y);
         updateTelemetry(telemetry);
 
-        if(gamepad1.a){
-            robot.turnServoContinuous(1);
-        }else if(gamepad1.b){
-            robot.turnServoContinuous(-1);
-        }else{
-            robot.stopServoContinuous();
-        }
 
-        if(gamepad1.x) {
-            robot.driveLimitlessS(1);
-        } else if(gamepad1.y) {
-            robot.driveLimitlessS(-1);
-        } else {
-            robot.driveLimitlessS(0);
-        }
-
-        if(gamepad1.dpad_down) {
-            robot.spinFloat();
-        } else if (gamepad1.dpad_up) {
-            robot.spinBrake();
-        }
-
-        double leftDrivePower = gamepad1.left_stick_y;
-        double rightDrivePower = gamepad1.right_stick_y;
-        if(Math.abs(leftDrivePower) < 0.05) leftDrivePower = 0;
-        if(Math.abs(rightDrivePower) < 0.05) rightDrivePower = 0;
-        robot.drive(leftDrivePower, rightDrivePower);
 
         //debug
 //        telemetry.addData("count ", close_count);
