@@ -14,6 +14,8 @@ public class HardwareBuggo {
     /* Public OpMode members. */
     public DcMotor spin = null;
 
+    public DcMotor cascade = null;
+    public DcMotor arm = null;
     public DcMotor fl   = null;
     public DcMotor  fr  = null;
     public DcMotor bl   = null;
@@ -40,14 +42,16 @@ public class HardwareBuggo {
 
         // Define and Initialize Motors
         spin = (DcMotor)hwMap.get("spin");
-
+        arm = (DcMotor)hwMap.get("arm");
+        cascade = (DcMotor)hwMap.get("cascade");
         fl = (DcMotor)hwMap.get("fl");
         bl = (DcMotor)hwMap.get("bl");
         fr = (DcMotor)hwMap.get("fr");
         br = (DcMotor)hwMap.get("br");
 
         spin.setPower(sp);
-
+        cascade.setPower(sp);
+        arm.setPower(sp);
         fl.setPower(sp);
         fr.setPower(sp);
         bl.setPower(sp);
@@ -56,14 +60,16 @@ public class HardwareBuggo {
         sv1.setPower(sp);
 
         spin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        cascade.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         spin.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        arm.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        cascade.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         fr.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         bl.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -71,6 +77,9 @@ public class HardwareBuggo {
 
         fr.setDirection(DcMotorSimple.Direction.REVERSE);
         br.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        cascade.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     public void turnServoContinuous(double speed){ sv1.setPower(speed); }
@@ -81,7 +90,8 @@ public class HardwareBuggo {
     public void resetEncoders()
     {
         spin.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        cascade.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         fr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         bl.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -144,6 +154,12 @@ public class HardwareBuggo {
     public void driveLimitlessS(double speed) {
         spin.setPower(speed);
     }
+    public void rotateArm(double speed) {
+        arm.setPower(speed);
+    }
+    public void moveCascade(double speed) {
+        cascade.setPower(speed);
+    }
     public void drive(double speedL, double speedR) {
         fl.setPower(speedL);
         bl.setPower(speedL);
@@ -154,11 +170,9 @@ public class HardwareBuggo {
     public void spinBrake() {
         spin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
-
     public void spinFloat() {
         spin.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
-
 
     public void allStop()
     {

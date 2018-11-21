@@ -19,7 +19,7 @@ public class SwippoTeleop extends OpMode{
     @Override
     public void init() {
         robot.init(hardwareMap);
-        initVuforia();
+        //initVuforia();
         telemetry.addData("Say", "Hello Driver");
         updateTelemetry(telemetry);
     }

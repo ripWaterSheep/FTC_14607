@@ -65,6 +65,21 @@ public class BuggoTeleop extends OpMode{
             robot.spinBrake();
         }
 
+        if(gamepad1.dpad_left) {
+            robot.rotateArm(1);
+        } else if (gamepad1.dpad_right) {
+            robot.rotateArm(-1);
+        } else {
+            robot.rotateArm(0);
+        }
+
+        if(gamepad2.dpad_left) {
+            robot.moveCascade(1);
+        } else if (gamepad2.dpad_right) {
+            robot.moveCascade(-1);
+        } else {
+            robot.moveCascade(0);
+        }
         double leftDrivePower = gamepad1.left_stick_y;
         double rightDrivePower = gamepad1.right_stick_y;
         if(Math.abs(leftDrivePower) < 0.05) leftDrivePower = 0;
