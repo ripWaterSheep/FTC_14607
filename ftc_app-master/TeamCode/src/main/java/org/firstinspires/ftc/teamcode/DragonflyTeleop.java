@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,6 +8,9 @@ import com.qualcomm.robotcore.hardware.configuration.annotations.MotorType;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 //test
 @TeleOp(name="Teleop : Dragonfly", group="Dragonfly")
@@ -91,7 +95,7 @@ public class DragonflyTeleop extends OpMode{
             leftDrivePower = -gamepad2.left_trigger/1.5;
             rightDrivePower = -gamepad2.left_trigger/1.5;
         }
-        
+
         if(gamepad2.dpad_up){
             leftDrivePower = -0.2;
             rightDrivePower = -0.2;
@@ -117,8 +121,15 @@ public class DragonflyTeleop extends OpMode{
             leftDrivePower = leftDrivePower*1.5;
             rightDrivePower = rightDrivePower*1.5;
         }
-        
+
         robot.driveLimitless((leftDrivePower), (rightDrivePower));
+
+        if (gamepad2.right_stick_button) {
+            rotate(-90, leftDrivePower);
+        }
+        if (gamepad2.left_stick_button) {
+            rotate(90, leftDrivePower);
+        }
         //END DRIVE CODE
 
 
@@ -282,6 +293,78 @@ public class DragonflyTeleop extends OpMode{
 //        }
         //END DEBUGGING CODE
 
+    }
+
+    /**
+     * Rotate left or right the number of degrees. Does not support turning more than 359 degrees.
+     * @param degrees Degrees to turn, + is left - is right
+     */
+    public void rotate(int degrees, double power)
+    {
+        // restart imu angle tracking.
+        robot.resetAngle();
+
+        // if degrees > 359 we cap at 359 with same sign as original degrees.
+        if (Math.abs(degrees) > 359) degrees = (int) Math.copySign(359, degrees);
+
+        // start pid controller. PID controller will monitor the turn angle with respect to the
+        // target angle and reduce power as we approach the target angle. This is to prevent the
+        // robots momentum from overshooting the turn after we turn off the power. The PID controller
+        // reports onTarget() = true when the difference between turn angle and target angle is within
+        // 1% of target (tolerance) which is about 1 degree. This helps prevent overshoot. Overshoot is
+        // dependant on the motor and gearing configuration, starting power, weight of the robot and the
+        // on target tolerance. If the controller overshoots, it will reverse the sign of the output
+        // turning the robot back toward the setpoint value.
+
+        robot.pidRotate.reset();
+        robot.pidRotate.setSetpoint(degrees);
+        robot.pidRotate.setInputRange(0, degrees);
+        robot.pidRotate.setOutputRange(0, power);
+        robot.pidRotate.setTolerance(1);
+        robot.pidRotate.enable();
+
+        // getAngle() returns + when rotating counter clockwise (left) and - when rotating
+        // clockwise (right).
+
+        // rotate until turn is completed.
+
+        if (degrees < 0)
+        {
+            // On right turn we have to get off zero first.
+            while (robot.getAngle() == 0)
+            {
+                robot.driveLimitless(power, -power);
+                pause(0.100);
+            }
+
+            do
+            {
+                power = robot.pidRotate.performPID(robot.getAngle()); // power will be - on right turn.
+                robot.driveLimitless(-power, power);
+            } while (!robot.pidRotate.onTarget());
+        }
+        else    // left turn.
+            do
+            {
+                power = robot.pidRotate.performPID(robot.getAngle()); // power will be + on left turn.
+                robot.driveLimitless(-power, power);
+            } while (!robot.pidRotate.onTarget());
+
+        // turn the motors off.
+        robot.allStop();
+
+        robot.rotation = robot.getAngle();
+
+        // wait for rotation to stop.
+        pause(0.500);
+
+        // reset angle tracking on new heading.
+        robot.resetAngle();
+    }
+
+    public void pause(double time) {
+        double startTime = getRuntime();
+        while (getRuntime() - startTime < time) {}
     }
 
     /*
