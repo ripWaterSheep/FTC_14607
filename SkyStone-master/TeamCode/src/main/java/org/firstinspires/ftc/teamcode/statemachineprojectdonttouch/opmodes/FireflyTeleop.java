@@ -109,13 +109,13 @@ public class FireflyTeleop extends Firefly {
      * teleop user control
      */
     public void teleopDrivetrainControl() {
-        double scale = Math.abs(0.8 + (gamepad1.left_bumper ? -0.3 : gamepad1.right_bumper ? -0.6 : 0));
+        double scale = Math.abs(0.95 + (gamepad1.left_bumper ? -0.45 : gamepad1.right_bumper ? -0.75 : 0));
 
-        double threshold = 0.157;
+            double threshold = 0.157;
 
-        movementY =  Math.abs(-gamepad1.left_stick_y) > threshold ? -gamepad1.left_stick_y * scale : 0;
+        movementY =  Math.abs(gamepad1.left_stick_y) > threshold ? -gamepad1.left_stick_y * scale : 0;
         movementX = Math.abs(gamepad1.left_stick_x) > threshold ? gamepad1.left_stick_x * scale : 0;
-        movementTurn = Math.abs(gamepad1.right_stick_x) > threshold ? gamepad1.right_stick_x * scale : 0;
+        movementTurn = Math.abs(gamepad1.right_stick_x) > threshold ? -gamepad1.right_stick_x * scale : 0;
     }
 
 

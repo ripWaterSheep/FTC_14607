@@ -70,10 +70,6 @@ public class DriveTrain extends SampleMecanumDriveBase {
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
@@ -161,26 +157,27 @@ public class DriveTrain extends SampleMecanumDriveBase {
     /**
      *
      * @param xPower  x translation of robot; gamepad1.leftstick.x during teleop
-     * @param yPower  y translation of robot; gamepad1.leftstick.y during teleop
+     * @param yPower  y translation of robot; -gamepad1.leftstick.y during teleop
      * @param turnPower  turn of robot; gamepad1.rightstick.x during teleop
      */
 
     public void driveMecanum(double xPower,double yPower,double turnPower) {
 
-        double rawFL = yPower+turnPower+xPower*1.5;
-        double rawBL = yPower+turnPower- xPower*1.5;
-        double rawBR = yPower-turnPower+xPower*1.5;
-        double rawFR = yPower-turnPower-xPower*1.5;
+        double rawFL = movementY - movementTurn + movementX * 1.5;
+        double rawBL = movementY - movementTurn - movementX * 1.5;
+        double rawBR = -movementY - movementTurn - movementX * 1.5;
+        double rawFR = -movementY - movementTurn + movementX * 1.5;
+
 
 
         double scaleAmt = 1;
-        double biggestPower = rawFL;
+        double biggestPower = Math.abs(rawFL);
 
-        if(Math.abs(rawBL) > Math.abs(biggestPower)) { rawBL = biggestPower; }
-        if(Math.abs(rawFR) > Math.abs(biggestPower)) { rawFR = biggestPower; }
-        if(Math.abs(rawBR) > Math.abs(biggestPower)) { rawBR = biggestPower; }
+        if(Math.abs(rawBL) > (biggestPower)) { biggestPower = rawBL; }
+        if(Math.abs(rawFR) > (biggestPower)) { biggestPower = rawFR; }
+        if(Math.abs(rawBR) > (biggestPower)) { biggestPower = rawBR; }
         if(biggestPower > 1.0) {
-            scaleAmt = Math.abs(1.0 / biggestPower);
+            scaleAmt = 1.0/biggestPower;
         }
 
         rawFL *= scaleAmt;
