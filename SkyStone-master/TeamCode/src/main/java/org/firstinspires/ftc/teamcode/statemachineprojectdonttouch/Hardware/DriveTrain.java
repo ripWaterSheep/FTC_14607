@@ -154,14 +154,8 @@ public class DriveTrain extends SampleMecanumDriveBase {
 
 
 
-    /**
-     *
-     * @param xPower  x translation of robot; gamepad1.leftstick.x during teleop
-     * @param yPower  y translation of robot; -gamepad1.leftstick.y during teleop
-     * @param turnPower  turn of robot; gamepad1.rightstick.x during teleop
-     */
 
-    public void driveMecanum(double xPower,double yPower,double turnPower) {
+    public void driveMecanum() {
 
         double rawFL = movementY - movementTurn + movementX * 1.5;
         double rawBL = movementY - movementTurn - movementX * 1.5;
@@ -214,6 +208,6 @@ public class DriveTrain extends SampleMecanumDriveBase {
         }
         loopTime = SystemClock.uptimeMillis();
 
-        driveMecanum(movementX, movementY, movementTurn); // the robot will only move if we change movementX, movementY, or movementTurn
+        driveMecanum(); // the robot will only move if we change movementX, movementY, or movementTurn
     }
 }
