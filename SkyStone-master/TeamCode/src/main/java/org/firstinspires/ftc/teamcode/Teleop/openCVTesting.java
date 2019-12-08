@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import net.frogbots.ftcopmodetunercommon.opmode.TunableLinearOpMode;
+import net.frogbots.ftcopmodetunercommon.opmode.TunableOpMode;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -35,8 +37,10 @@ import java.util.List;
  *YES
  */
 @TeleOp(name= "openCV Tester", group="cv")
-public class openCVTesting extends LinearOpMode {
+public class openCVTesting extends TunableLinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
+
+
 
     //0 means skystone, 1 means yellow stone
     //-1 for debug, but we can keep it like this because if it works, it should change to either 0 or 255
@@ -48,11 +52,11 @@ public class openCVTesting extends LinearOpMode {
     private static float rectWidth = 1.5f/8f;
 
     private static float offsetX = 0f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
-    private static float offsetY = -2f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
+    private static float yPos = 2f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
 
-    private static float[] midPos = {4f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
-    private static float[] leftPos = {2f/8f+offsetX, 4f/8f+offsetY};
-    private static float[] rightPos = {6f/8f+offsetX, 4f/8f+offsetY};
+    private static float[] midPos = {4f/8f+offsetX, yPos};//0 = col, 1 = row
+    private static float[] leftPos = {2f/8f+offsetX, yPos};
+    private static float[] rightPos = {6f/8f+offsetX, yPos};
     //moves all rectangles right or left by amount. units are in ratio to monitor
 
     private final int rows = 640;
@@ -73,6 +77,8 @@ public class openCVTesting extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+        
+        double oldOffset = yPos;
         while (opModeIsActive()) {
             telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
             telemetry.addData("Height", rows);
@@ -80,9 +86,21 @@ public class openCVTesting extends LinearOpMode {
 
             telemetry.update();
             sleep(100);
-            //call movement functions
-//            strafe(0.4, 200);
-//            moveDistance(0.4, 700);
+            
+            
+            // range (0,1) not inclusive
+            yPos = (float)(getDouble("yPos"));
+            
+            
+
+            
+            if(oldOffset != yPos) {
+                phoneCam.stopStreaming();
+                phoneCam.setPipeline(new StageSwitchingPipeline());
+                phoneCam.startStreaming(rows, cols, OpenCvCameraRotation.SIDEWAYS_LEFT);
+            }
+            
+            oldOffset = yPos;
 
         }
     }
@@ -133,7 +151,6 @@ public class openCVTesting extends LinearOpMode {
              * This pipeline finds the contours of yellow blobs such as the Gold Mineral
              * from the Rover Ruckus game.
              */
-
             //color diff cb.
             //lower cb = more blue = skystone = white
             //higher cb = less blue = yellow stone = grey
