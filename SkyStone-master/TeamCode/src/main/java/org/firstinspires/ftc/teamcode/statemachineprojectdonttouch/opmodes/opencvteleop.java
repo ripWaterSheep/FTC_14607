@@ -1,17 +1,13 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.statemachineprojectdonttouch.opmodes;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import static org.firstinspires.ftc.teamcode.HelperClasses.GLOBALS.*;
 
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
+import org.firstinspires.ftc.teamcode.statemachineprojectdonttouch.HelperClasses.Firefly;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -22,19 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * Created by maryjaneb  on 11/13/2016.
- *
- * nerverest ticks
- * 60 1680
- * 40 1120
- * 20 560
- *
- * monitor: 640 x 480
- *YES
- */
-@Autonomous(name= "opencvSkystoneDetector", group="Sky autonomous")
-public class openCVTesting extends LinearOpMode {
+@TeleOp
+public class opencvteleop  extends LinearOpMode{
     private ElapsedTime runtime = new ElapsedTime();
 
     //0 means skystone, 1 means yellow stone
@@ -44,45 +29,56 @@ public class openCVTesting extends LinearOpMode {
     private static int valRight = -1;
 
     private static float rectHeight = .6f/8f;
-    private static float rectWidth = 1f/8f;
+    private static float rectWidth = 1.5f/8f;
 
+    private static float offsetX = 0f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
+    private static float offsetY = 0f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
 
-    private static float[] midPos = {4f/8f, 3.2f/8f};//0 = col, 1 = row
-    private static float[] leftPos = {2f/8f, 3.2f/8f};
-    private static float[] rightPos = {6f/8f, 3.2f/8f};
+    private static float[] midPos = {4f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
+    private static float[] leftPos = {2f/8f+offsetX, 4f/8f+offsetY};
+    private static float[] rightPos = {6f/8f+offsetX, 4f/8f+offsetY};
     //moves all rectangles right or left by amount. units are in ratio to monitor
 
     private final int rows = 640;
     private final int cols = 480;
 
     OpenCvCamera phoneCam;
+    Firefly myRobot;
 
-    @Override
-    public void runOpMode() throws InterruptedException {
+    private int cameraMonitorViewId;
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+
+
+
+
+    public void initCamera() {
         phoneCam = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-        phoneCam.openCameraDevice();//open camera
-        phoneCam.setPipeline(new StageSwitchingPipeline());//different stages
-        phoneCam.startStreaming(rows, cols, OpenCvCameraRotation.SIDEWAYS_LEFT);//display on RC
-        //width, height
-        //width = height in this case, because camera is in portrait mode.
+        phoneCam.openCameraDevice();
+        phoneCam.setPipeline(new StageSwitchingPipeline());
+        phoneCam.startStreaming(rows, cols, OpenCvCameraRotation.SIDEWAYS_LEFT);
+    }
 
+    public void runOpMode() {
         waitForStart();
-        runtime.reset();
-        while (opModeIsActive()) {
-            telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
-            telemetry.addData("Height", rows);
-            telemetry.addData("Width", cols);
+        telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
+        telemetry.addData("Height", rows);
+        telemetry.addData("Width", cols);
 
-            telemetry.update();
-            sleep(100);
-            //call movement functions
-//            strafe(0.4, 200);
-//            moveDistance(0.4, 700);
 
+        if(valLeft == 0) {
+            ourSkystonePosition = SKYSTONE_POSITION.LEFT;
+        }
+
+        if(valMid == 0) {
+            ourSkystonePosition = SKYSTONE_POSITION.MIDDLE;
+        }
+
+        if(valRight == 0) {
+            ourSkystonePosition = SKYSTONE_POSITION.RIGHT;
         }
     }
+
+
 
     //detection pipeline
     static class StageSwitchingPipeline extends OpenCvPipeline
@@ -126,10 +122,7 @@ public class openCVTesting extends LinearOpMode {
         public Mat processFrame(Mat input)
         {
             contoursList.clear();
-            /*
-             * This pipeline finds the contours of yellow blobs such as the Gold Mineral
-             * from the Rover Ruckus game.
-             */
+
 
             //color diff cb.
             //lower cb = more blue = skystone = white

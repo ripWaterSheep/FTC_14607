@@ -26,15 +26,13 @@ public class opencvSkystoneDetector  {
     private static int valLeft = -1;
     private static int valRight = -1;
 
-    private static float rectHeight = .6f/8f;
-    private static float rectWidth = 1.5f/8f;
+    private static float rectHeight = 3f/8f;
+    private static float rectWidth = 1/8f;
 
-    private static float offsetX = 0f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
-    private static float offsetY = 0f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
 
-    private static float[] midPos = {4f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
-    private static float[] leftPos = {2f/8f+offsetX, 4f/8f+offsetY};
-    private static float[] rightPos = {6f/8f+offsetX, 4f/8f+offsetY};
+    private static float[] midPos = {4f/8f, 2.7f/8f};//0 = col, 1 = row
+    private static float[] leftPos = {2f/8f, 2.7f/8f};
+    private static float[] rightPos = {6f/8f, 2.7f/8f};
     //moves all rectangles right or left by amount. units are in ratio to monitor
 
     private final int rows = 640;
@@ -61,6 +59,7 @@ public class opencvSkystoneDetector  {
     
     public void update() {
         myRobot.telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
+        myRobot.telemetry.addData("skystone pos", ourSkystonePosition);
         myRobot.telemetry.addData("Height", rows);
         myRobot.telemetry.addData("Width", cols);
 
@@ -165,7 +164,7 @@ public class opencvSkystoneDetector  {
                     new Point(
                             input.cols()*(leftPos[0]-rectWidth/2),
                             input.rows()*(leftPos[1]-rectHeight/2)),
-                    new Point(
+                            new Point(
                             input.cols()*(leftPos[0]+rectWidth/2),
                             input.rows()*(leftPos[1]+rectHeight/2)),
                     new Scalar(0, 255, 0), 3);

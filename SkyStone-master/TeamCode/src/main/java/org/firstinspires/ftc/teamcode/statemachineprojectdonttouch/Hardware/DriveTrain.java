@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.statemachineprojectdonttouch.Hardware;
 
-import android.annotation.SuppressLint;
 import android.os.SystemClock;
-import android.sax.StartElementListener;
 import android.support.annotation.NonNull;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
@@ -10,12 +8,8 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.teamcode.statemachineprojectdonttouch.HelperClasses.Firefly;
 import org.firstinspires.ftc.teamcode.Auto.roadrunner.drive.mecanum.SampleMecanumDriveBase;
-import org.firstinspires.ftc.teamcode.Auto.roadrunner.util.AxesSigns;
-import org.firstinspires.ftc.teamcode.Auto.roadrunner.util.BNO055IMUUtil;
-import org.firstinspires.ftc.teamcode.Auto.roadrunner.util.LynxOptimizedI2cFactory;
+import org.firstinspires.ftc.teamcode.statemachineprojectdonttouch.HelperClasses.Firefly;
 import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.RevBulkData;
@@ -69,6 +63,10 @@ public class DriveTrain extends SampleMecanumDriveBase {
         frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+
 
         if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
             setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
@@ -154,14 +152,19 @@ public class DriveTrain extends SampleMecanumDriveBase {
 
 
 
+    /**
+     *
+     * @param xPower  x translation of robot; gamepad1.leftstick.x during teleop
+     * @param yPower  y translation of robot; gamepad1.leftstick.y during teleop
+     * @param turnPower  turn of robot; gamepad1.rightstick.x during teleop
+     */
 
-    public void driveMecanum() {
+    public void driveMecanum(double xPower,double yPower,double turnPower) {
 
-        double rawFL = movementY - movementTurn + movementX * 1.5;
-        double rawBL = movementY - movementTurn - movementX * 1.5;
-        double rawBR = -movementY - movementTurn - movementX * 1.5;
-        double rawFR = -movementY - movementTurn + movementX * 1.5;
-
+        double rawFL = -yPower-turnPower-xPower*1.5;
+        double rawBL = yPower-turnPower- xPower*1.5;
+        double rawBR = -yPower+turnPower-xPower*1.5;
+        double rawFR = yPower+turnPower-xPower*1.5;
 
 
         double scaleAmt = 1;
@@ -208,6 +211,6 @@ public class DriveTrain extends SampleMecanumDriveBase {
         }
         loopTime = SystemClock.uptimeMillis();
 
-        driveMecanum(); // the robot will only move if we change movementX, movementY, or movementTurn
+        driveMecanum(movementX, movementY, movementTurn); // the robot will only move if we change movementX, movementY, or movementTurn
     }
 }
