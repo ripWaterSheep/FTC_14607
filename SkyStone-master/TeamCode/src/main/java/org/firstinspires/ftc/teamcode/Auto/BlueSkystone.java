@@ -1,10 +1,16 @@
-package org.firstinspires.ftc.teamcode.Teleop;
+package org.firstinspires.ftc.teamcode.Auto;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Auto.roadrunner.drive.mecanum.SampleMecanumDriveREV;
+import org.firstinspires.ftc.teamcode.HelperClasses.GLOBALS;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -21,9 +27,12 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.firstinspires.ftc.teamcode.HelperClasses.GLOBALS.ourSkystonePosition;
 
-@Autonomous(name= "opencvSkystoneDetector", group="Sky autonomous")
-public class openCVTesting extends LinearOpMode {
+
+@Autonomous
+public class BlueSkystone extends LinearOpMode {
+
     private ElapsedTime runtime = new ElapsedTime();
 
     //0 means skystone, 1 means yellow stone
@@ -33,12 +42,14 @@ public class openCVTesting extends LinearOpMode {
     private static int valRight = -1;
 
     private static float rectHeight = .6f/8f;
-    private static float rectWidth = 1f/8f;
+    private static float rectWidth = 1.5f/8f;
 
+    private static float offsetX = 0f/8f;//changing this moves the three rects and the three circles left or right, range : (-2, 2) not inclusive
+    private static float offsetY = 0f/8f;//changing this moves the three rects and circles up or down, range: (-4, 4) not inclusive
 
-    private static float[] midPos = {4f/8f, 2.7f/8f};//0 = col, 1 = row
-    private static float[] leftPos = {2f/8f, 2.7f/8f};
-    private static float[] rightPos = {6f/8f, 2.7f/8f};
+    private static float[] midPos = {4f/8f+offsetX, 4f/8f+offsetY};//0 = col, 1 = row
+    private static float[] leftPos = {2f/8f+offsetX, 4f/8f+offsetY};
+    private static float[] rightPos = {6f/8f+offsetX, 4f/8f+offsetY};
     //moves all rectangles right or left by amount. units are in ratio to monitor
 
     private final int rows = 640;
@@ -46,34 +57,71 @@ public class openCVTesting extends LinearOpMode {
 
     OpenCvCamera phoneCam;
 
+
+
+
+
+
+
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         phoneCam = new OpenCvInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
         phoneCam.openCameraDevice();//open camera
         phoneCam.setPipeline(new StageSwitchingPipeline());//different stages
-        phoneCam.startStreaming(rows, cols, OpenCvCameraRotation.SIDEWAYS_LEFT);//display on RC
+        phoneCam.startStreaming(rows, cols, OpenCvCameraRotation.UPRIGHT);//display on RC
         //width, height
         //width = height in this case, because camera is in portrait mode.
 
-        waitForStart();
-        runtime.reset();
-        while (opModeIsActive()) {
-            telemetry.addData("Values", valLeft+"   "+valMid+"   "+valRight);
-            telemetry.addData("Height", rows);
-            telemetry.addData("Width", cols);
 
-            telemetry.update();
-            sleep(100);
-            //call movement functions
-//            strafe(0.4, 200);
-//            moveDistance(0.4, 700);
+
+        SampleMecanumDriveREV robot = new SampleMecanumDriveREV(hardwareMap);
+
+        if(valLeft == 0) {
+            ourSkystonePosition = GLOBALS.SKYSTONE_POSITION.LEFT;
+        }
+
+        if(valMid == 0) {
+            ourSkystonePosition = GLOBALS.SKYSTONE_POSITION.MIDDLE;
+        }
+
+        if(valRight == 0) {
+            ourSkystonePosition = GLOBALS.SKYSTONE_POSITION.RIGHT;
+        }
+
+
+
+        waitForStart();
+        phoneCam.closeCameraDevice();
+        runtime.reset();
+
+
+        Trajectory forward = new TrajectoryBuilder(new Pose2d(0,0,0), DriveConstants.BASE_CONSTRAINTS)
+                .forward(24)
+                .back(24)
+                .strafeLeft(24)
+                .strafeRight(24)
+                .build();
+
+
+        robot.followTrajectorySync(forward);
+
+        robot.turnSync(90);
+
+        while(robot.isBusy()) {
 
         }
+
+
+
+
+
+
+
+
     }
 
-    //detection pipeline
     static class StageSwitchingPipeline extends OpenCvPipeline
     {
         Mat yCbCrChan2Mat = new Mat();
@@ -210,3 +258,4 @@ public class openCVTesting extends LinearOpMode {
 
     }
 }
+

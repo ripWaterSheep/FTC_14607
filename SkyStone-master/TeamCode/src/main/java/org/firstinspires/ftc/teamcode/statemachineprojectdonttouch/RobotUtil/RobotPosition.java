@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.statemachineprojectdonttouch.RobotUtil;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import org.firstinspires.ftc.teamcode.statemachineprojectdonttouch.HelperClasses.OdometryModule;
 
-import static org.firstinspires.ftc.teamcode.Auto.roadrunner.drive.DriveConstants.TICKS_PER_REV;
-import static org.firstinspires.ftc.teamcode.Auto.roadrunner.drive.DriveConstants.inchesToEncoderTicks;
+import static org.firstinspires.ftc.teamcode.Auto.DriveConstants.TICKS_PER_REV;
 import static org.firstinspires.ftc.teamcode.HelperClasses.GLOBALS.AngleWrap;
 
 
@@ -19,10 +17,6 @@ public class RobotPosition {
 
 
 
-
-
-
-    private OdometryModule leftEncoder, rightEncoder, middleEncoder;
 
     // call this to update pose, input roadrunner pose
     public static void giveMePose(Pose2d pose) {
@@ -52,4 +46,3 @@ public class RobotPosition {
 
 
 }
-
