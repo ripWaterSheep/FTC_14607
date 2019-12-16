@@ -15,7 +15,8 @@ public class Intake {
 
 
     // intake specific stuff
-    private  enum intakeStates {
+    private intakeStates ourIntakeStates;
+    private enum intakeStates {
         ON,
         OFF,
         REVERSE
@@ -37,12 +38,37 @@ public class Intake {
 
 
         rightIntake.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        ourIntakeStates = intakeStates.OFF;
     }
 
 
 
 
 
-    public void
+    public void turnOnIntake() {
+        ourIntakeStates = intakeStates.ON;
+    }
+
+    public void turnOffIntake() {
+        ourIntakeStates = intakeStates.OFF;
+    }
+
+    public void reverseIntake() {
+        ourIntakeStates = intakeStates.REVERSE;
+    }
+
+
+
+
+    private void ApplyMovement() {
+        if(ourIntakeStates == intakeStates.ON) {
+            leftIntake.setPower(1);
+        }
+    }
+
+    public void update() {
+
+    }
 
 }
