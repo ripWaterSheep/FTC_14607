@@ -60,7 +60,6 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.google.blocks.ftcrobotcontroller.BlocksActivity;
 import com.google.blocks.ftcrobotcontroller.ProgrammingModeActivity;
 import com.google.blocks.ftcrobotcontroller.ProgrammingModeControllerImpl;
@@ -320,7 +319,6 @@ public class FtcRobotControllerActivity extends Activity
           }
         });
         popupMenu.inflate(R.menu.ftc_robot_controller);
-          FtcDashboard.populateMenu(popupMenu.getMenu());
           popupMenu.show();
       }
     });
@@ -391,7 +389,6 @@ public class FtcRobotControllerActivity extends Activity
       initWifiMute(true);
     }
 
-      FtcDashboard.start();
 
   }
 
@@ -476,7 +473,6 @@ public class FtcRobotControllerActivity extends Activity
 
     RobotLog.cancelWriteLogcatToDisk();
     //
-      FtcDashboard.stop();
     //
   }
 
@@ -550,7 +546,6 @@ public class FtcRobotControllerActivity extends Activity
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.ftc_robot_controller, menu);
-      FtcDashboard.populateMenu(menu);
     return true;
   }
 
@@ -705,7 +700,6 @@ public class FtcRobotControllerActivity extends Activity
       }
     });
     //
-      FtcDashboard.attachWebServer(service.getWebServer());
     //
   }
 
