@@ -12,7 +12,7 @@ public class Intake {
     private ExpansionHubMotor leftIntake, rightIntake;
     private Firefly robot;
     private ArrayList<ExpansionHubMotor> allMotors = new ArrayList<>();
-
+    private boolean isDebugging = false;
 
     // intake specific stuff
     private intakeStates ourIntakeStates;
@@ -46,6 +46,11 @@ public class Intake {
 
 
 
+
+
+
+    // public methods
+
     public void turnOnIntake() {
         ourIntakeStates = intakeStates.ON;
     }
@@ -61,14 +66,43 @@ public class Intake {
 
 
 
+
+
+
+
+    // controls movement
+
     private void ApplyMovement() {
         if(ourIntakeStates == intakeStates.ON) {
             leftIntake.setPower(1);
+            rightIntake.setPower(1);
+        }
+
+        else if(ourIntakeStates == intakeStates.REVERSE) {
+            leftIntake.setPower(-1);
+            rightIntake.setPower(-1);
+        }
+
+        else if(ourIntakeStates == intakeStates.OFF) {
+            leftIntake.setPower(0);
+            rightIntake.setPower(0);
         }
     }
 
-    public void update() {
 
+
+
+    public void setDebugging(boolean debugging) {
+        isDebugging = debugging;
+    }
+
+
+    private void controlDebugging() {
+
+    }
+
+    public void update() {
+        ApplyMovement();
     }
 
 }
