@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.main.Teleop;
 //BASED OFF OF AUTOMATED TELEOP DOES NOT ACCOUNT FOR NEW RESTRUCTURING
 
 import android.annotation.SuppressLint;
+import android.os.SystemClock;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 
@@ -11,10 +14,10 @@ import net.frogbots.ftcopmodetunercommon.opmode.TunableOpMode;
 
 import org.openftc.revextensions2.ExpansionHubMotor;
 
-import static org.firstinspires.ftc.teamcode.GLOBALS.*;
 
 import java.util.ArrayList;
 
+import static org.firstinspires.ftc.teamcode.GLOBALS.*;
 
 
 @TeleOp(name = "MAIN teleop control")
@@ -101,6 +104,7 @@ public class HorseFlyCap extends TunableOpMode {
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
+
         leftSlide.setPIDCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDCoefficients(P,I,D));
         rightSlide.setPIDCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDCoefficients(P,I,D));
 
@@ -113,7 +117,7 @@ public class HorseFlyCap extends TunableOpMode {
         /*
          * HOME THE FLIP AND GRIP SERVO
          */
-        capstone.setPosition(capBetween);
+//        capstone.setPosition(capBetween);
         flipReady();
         rotaterReady();
         gripReady();
@@ -196,9 +200,9 @@ public class HorseFlyCap extends TunableOpMode {
         if(gamepad1.left_stick_button) {
             capstone.setPosition(capBetween);
         }else if(gamepad1.right_trigger > 0.5) {
-            capstone.setPosition(capDown);
-        }else{
             capstone.setPosition(capUp);
+        }else{
+            capstone.setPosition(capDown);
         }
 
 
@@ -212,14 +216,14 @@ public class HorseFlyCap extends TunableOpMode {
 
         if(gamepad2.dpad_down) {
             double gime = System.currentTimeMillis();
-            if(System.currentTimeMillis()-gime <500) {
-                capstone.setPosition(capUp);
-            }
+//            if(System.currentTimeMillis()-gime <500) {
+////                capstone.setPosition(capUp);
+//            }
             flipper.setPosition(flipperBetween);
         }
 
         if(gamepad2.dpad_up) {
-            capstone.setPosition(capUp);
+//            capstone.setPosition(capUp);
         }
 
         if(gamepad2.right_trigger > 0.5) {
@@ -241,10 +245,10 @@ public class HorseFlyCap extends TunableOpMode {
 
         // gripper arm control
         if(gamepad2.a) {
-            grip();
+            gripReady();
         }
         if(gamepad2.y) {
-            gripReady();
+            grip();
         }
 
 
@@ -264,13 +268,13 @@ public class HorseFlyCap extends TunableOpMode {
 
         // AUTOMATED FLIP
         if(gamepad2.dpad_left) {
-            capstone.setPosition(capBetween);
+//            capstone.setPosition(capBetween);
         }
 
         //BACK IN
         if(gamepad2.dpad_right)
         {
-            capstone.setPosition(capDown);
+//            capstone.setPosition(capDown);
         }
 
 

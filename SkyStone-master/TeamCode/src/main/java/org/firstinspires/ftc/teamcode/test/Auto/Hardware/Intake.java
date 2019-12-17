@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.test.Auto.HelperClasses.Firefly;
 import org.openftc.revextensions2.ExpansionHubMotor;
 
+
+import static org.firstinspires.ftc.teamcode.test.Auto.HelperClasses.Firefly.*;
 import java.util.ArrayList;
 
 public class Intake {
@@ -98,11 +100,19 @@ public class Intake {
 
 
     private void controlDebugging() {
-
+        if(isDebugging) {
+            robot.telemetry.addLine(header + " INTAKE TELEMETRY " + header);
+            robot.telemetry.addLine("left intake speed: " + leftIntake.getPower());
+            robot.telemetry.addLine("right intake speed: " + rightIntake.getPower());
+            robot.telemetry.addLine("intakeState: " + ourIntakeStates);
+        }
     }
+
+
 
     public void update() {
         ApplyMovement();
+        controlDebugging();
     }
 
 }
